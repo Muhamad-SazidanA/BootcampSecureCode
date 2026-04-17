@@ -477,8 +477,7 @@
                     </a>
                 </li>
 
-                {{-- BLADE TEMPLATING --}}
-                <li class="nav-section">Blade Templating</li>
+                <li class="nav-section">Demo</li>
 
                 {{-- Demo Blade --}}
                 <li class="nav-item">
@@ -513,6 +512,13 @@
                             </a>
                         </li>
                     </ul>
+                </li>
+
+                {{-- Error Handling Demo - Minggu 5 Hari 2 --}}
+                <li class="nav-item">
+                    <a href="{{ route('error-handling-demo') }}" class="nav-link {{ request()->routeIs('error-handling-demo') ? 'active' : '' }}">
+                        <i class="bi bi-exclamation-triangle"></i> Error Handling Demo
+                    </a>
                 </li>
 
                 {{-- SECURITY LABS --}}
@@ -682,12 +688,12 @@
                         </li>
                         {{-- Secure Auth --}}
                         <li class="nav-item">
-                            <a href="{{ route('bac-lab.secure.login') }}" class="nav-link text-success">
+                            <a href="{{ route('login') }}" class="nav-link text-success">
                                 <i class="bi bi-box-arrow-in-right"></i> Login (Secure)
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('bac-lab.secure.register') }}" class="nav-link text-success">
+                            <a href="{{ route('register') }}" class="nav-link text-success">
                                 <i class="bi bi-person-plus"></i> Register (Secure)
                             </a>
                         </li>
@@ -812,6 +818,41 @@
                         <li class="nav-item">
                             <a href="{{ route('bac-lab.comparison') }}" class="nav-link {{ request()->routeIs('bac-lab.comparison') ? 'active' : '' }}">
                                 <i class="bi bi-arrows-angle-expand"></i> Comparison
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- File Upload Lab - Minggu 5 Hari 3 & 4 --}}
+                <li class="nav-item">
+                    <a href="#fileUploadLab" class="nav-link {{ request()->routeIs('file-upload-lab.*') ? '' : 'collapsed' }}"
+                       data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('file-upload-lab.*') ? 'true' : 'false' }}">
+                        <i class="bi bi-cloud-upload"></i> File Upload Lab
+                    </a>
+                    <ul class="collapse nav-collapse {{ request()->routeIs('file-upload-lab.*') ? 'show' : '' }}" id="fileUploadLab">
+                        <li class="nav-item">
+                            <a href="{{ route('file-upload-lab.index') }}" class="nav-link">
+                                <i class="bi bi-house"></i> Overview
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('file-upload-lab.overview', 'logging') }}" class="nav-link text-info">
+                                <i class="bi bi-journal-text"></i> Logging Materi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('file-upload-lab.overview', 'upload-basics') }}" class="nav-link text-info">
+                                <i class="bi bi-book"></i> Upload Basics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('file-upload-lab.vulnerable.index') }}" class="nav-link text-danger">
+                                <i class="bi bi-bug"></i> Vulnerable Lab
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('file-upload-lab.secure.index') }}" class="nav-link text-success">
+                                <i class="bi bi-shield-check"></i> Secure Upload
                             </a>
                         </li>
                     </ul>
@@ -949,8 +990,8 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><h6 class="dropdown-header"><i class="bi bi-shield-check"></i> Secure Auth</h6></li>
-                                    <li><a class="dropdown-item" href="{{ route('bac-lab.secure.login') }}"><i class="bi bi-box-arrow-in-right text-success"></i> Login</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('bac-lab.secure.register') }}"><i class="bi bi-person-plus text-success"></i> Register</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right text-success"></i> Login</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('register') }}"><i class="bi bi-person-plus text-success"></i> Register</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><h6 class="dropdown-header"><i class="bi bi-exclamation-triangle"></i> Vulnerable Auth</h6></li>
                                     <li><a class="dropdown-item" href="{{ route('vulnerable.login') }}"><i class="bi bi-unlock text-danger"></i> Login</a></li>

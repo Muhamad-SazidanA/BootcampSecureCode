@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\LoginAttempt;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -75,8 +77,17 @@ class LoginController extends Controller
      */
     public function status(Request $request): View
     {
-        $loginAttempts = \App\Models\LoginAttempt::secure()
-            ->where('email', Auth::user()?->email ?? $request->input('email', ''))
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            return view('auth.status', [
+                'attempts' => collect(),
+                'isSecure' => true,
+            ]);
+        }
+
+        $loginAttempts = LoginAttempt::secure()
+            ->where('email', $user->email)
             ->latest()
             ->take(10)
             ->get();

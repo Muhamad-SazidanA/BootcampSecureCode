@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
 
             // Foreign key ke users - owner ticket
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
             // Foreign key ke users - staff yang di-assign (nullable)
-            $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
 
             $table->string('title');
             $table->text('description');

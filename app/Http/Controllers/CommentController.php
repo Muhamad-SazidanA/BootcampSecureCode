@@ -18,22 +18,6 @@ use Illuminate\Support\Facades\Auth;
  */
 class CommentController extends Controller
 {
-    public function commentForm()
-    {
-        return view('xss.comment');
-    }
-
-    public function storeComment(Request $request)
-    {
-        $validated = $request->validate([
-            'comment' => 'required|string|max:500'
-        ]);
-
-        $clean = strip_tags($validated['comment']);
-
-        return back()->with('comment', $clean);
-    }
-
     /**
      * Store a new comment.
      * 
@@ -71,7 +55,7 @@ class CommentController extends Controller
         // Data yang disimpan sudah bersih dari HTML tags
         // Tapi tetap, di view kita akan menggunakan {{ }} untuk auto-escape
         // Ini adalah defense in depth - multiple layers of protection
-
+        
         // ⚠️ TEMPORARY: Hardcode user_id = 1 (demo user dari seeder)
         // TODO: Ganti dengan Auth::id() di Minggu 4 setelah implementasi Authentication
         // Contoh nanti: 'user_id' => Auth::id(),
@@ -110,7 +94,7 @@ class CommentController extends Controller
             // Check apakah user adalah admin
             // Asumsikan ada kolom is_admin atau role di tabel users
             $isAdmin = Auth::user()->is_admin ?? false;
-
+            
             if (!$isAdmin) {
                 // Unauthorized - return 403 Forbidden
                 abort(403, 'Anda tidak memiliki izin untuk menghapus komentar ini.');

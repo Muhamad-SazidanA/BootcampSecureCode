@@ -1,6 +1,6 @@
 {{--
     Login View untuk Minggu 4 Hari 2: Authorization
-
+    
     INTEGRASI MATERI:
     - Minggu 2: Blade templating dengan @extends, @section
     - Minggu 3: @csrf, @error, old() untuk form handling
@@ -30,7 +30,7 @@
                 </h4>
             </div>
             <div class="card-body p-4">
-
+            
                 {{-- MINGGU 4 HARI 1: Security Features Info --}}
                 <div class="alert alert-info small mb-4">
                     <strong><i class="bi bi-shield-check"></i> Security Features:</strong>
@@ -48,13 +48,13 @@
 
                     {{-- Email Field --}}
                     <div class="form-floating mb-3">
-                        <input type="email"
-                               class="form-control @error('email') is-invalid @enderror"
-                               id="email"
-                               name="email"
+                        <input type="email" 
+                               class="form-control @error('email') is-invalid @enderror" 
+                               id="email" 
+                               name="email" 
                                value="{{ old('email') }}"
                                placeholder="email@example.com"
-                               required
+                               required 
                                autofocus>
                         <label for="email">
                             <i class="bi bi-envelope"></i> Email
@@ -67,11 +67,11 @@
 
                     {{-- Password Field --}}
                     <div class="form-floating mb-3">
-                        <input type="password"
-                               class="form-control @error('password') is-invalid @enderror"
-                               id="password"
+                        <input type="password" 
+                               class="form-control @error('password') is-invalid @enderror" 
+                               id="password" 
                                name="password"
-                               placeholder="Password"
+                               placeholder="Password" 
                                required>
                         <label for="password">
                             <i class="bi bi-key"></i> Password
@@ -138,7 +138,7 @@
                 </table>
             </div>
             <div class="card-footer small text-muted">
-                <i class="bi bi-lightbulb"></i>
+                <i class="bi bi-lightbulb"></i> 
                 <strong>Tips:</strong> Coba login dengan user berbeda untuk melihat perbedaan akses!
             </div>
         </div>
@@ -156,14 +156,14 @@ public function update(User $user, Ticket $ticket): bool
     if ($user->isAdmin()) {
         return true;
     }
-
+    
     <span class="text-success">// Staff bisa update yang assigned ke mereka</span>
     if ($user->isStaff()) {
         return $ticket->assigned_to === $user->id;
     }
-
+    
     <span class="text-success">// User hanya bisa update milik sendiri</span>
-    return $ticket->belongsToUser($user) &&
+    return $ticket->belongsToUser($user) && 
            $ticket->isEditable();
 }
 

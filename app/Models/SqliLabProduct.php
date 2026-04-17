@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -41,10 +42,10 @@ class SqliLabProduct extends Model
      *
      * SECURE: Menggunakan parameter binding otomatis
      */
-    public function scopeSearch($query, $term)
+    public function scopeSearch(Builder $query, string $term): Builder
     {
-        return $query->where('name', 'LIKE', '%'.$term.'%')
-            ->orWhere('description', 'LIKE', '%'.$term.'%');
+        return $query->where('name', 'LIKE', '%' . $term . '%')
+            ->orWhere('description', 'LIKE', '%' . $term . '%');
     }
 
     /**
@@ -52,7 +53,7 @@ class SqliLabProduct extends Model
      *
      * SECURE: Eloquent scope dengan parameter
      */
-    public function scopePriceRange($query, $min, $max)
+    public function scopePriceRange(Builder $query, float $min, float $max): Builder
     {
         return $query->whereBetween('price', [$min, $max]);
     }
@@ -60,7 +61,7 @@ class SqliLabProduct extends Model
     /**
      * Scope untuk stok tersedia
      */
-    public function scopeInStock($query)
+    public function scopeInStock(Builder $query): Builder
     {
         return $query->where('stock', '>', 0);
     }
@@ -68,8 +69,8 @@ class SqliLabProduct extends Model
     /**
      * Format harga sebagai Rupiah
      */
-    public function getFormattedPriceAttribute()
+    public function getFormattedPriceAttribute(): string
     {
-        return 'Rp '.number_format($this->price, 0, ',', '.');
+        return 'Rp ' . number_format((float) $this->price, 0, ',', '.');
     }
 }

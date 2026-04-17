@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -14,7 +17,7 @@ use Illuminate\Notifications\Notifiable;
  * - Hidden attributes untuk keamanan
  * - Proper casting untuk tipe data
  */
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmailContract
 {
     use HasFactory, Notifiable;
 
@@ -24,7 +27,7 @@ class User extends Authenticatable
      * SECURITY: Hanya field yang boleh diisi via mass assignment
      * Role ditambahkan untuk RBAC (Minggu 4 Hari 2)
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -39,7 +42,7 @@ class User extends Authenticatable
      * SECURITY: Password dan remember_token tidak akan muncul
      * saat model di-convert ke array/JSON
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -106,7 +109,7 @@ class User extends Authenticatable
      * Tickets yang dibuat oleh user ini
      * Penggunaan: $user->tickets
      */
-    public function tickets()
+    public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'user_id');
     }
@@ -115,7 +118,7 @@ class User extends Authenticatable
      * Tickets yang di-assign ke user ini (untuk staff)
      * Penggunaan: $user->assignedTickets
      */
-    public function assignedTickets()
+    public function assignedTickets(): HasMany
     {
         return $this->hasMany(Ticket::class, 'assigned_to');
     }
@@ -124,7 +127,7 @@ class User extends Authenticatable
      * Scope untuk mencari user berdasarkan email
      * SECURE: Menggunakan Eloquent (parameterized query)
      */
-    public function scopeByEmail($query, $email)
+    public function scopeByEmail(Builder $query, string $email): Builder
     {
         return $query->where('email', $email);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\LoginAttempt;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -9,14 +10,6 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
-/**
- * Login Request - SECURE IMPLEMENTATION
- *
- * Request ini mengimplementasikan:
- * 1. Input validation
- * 2. Rate limiting (brute force protection)
- * 3. Proper authentication flow
- */
 class LoginRequest extends FormRequest
 {
     /**
@@ -30,7 +23,7 @@ class LoginRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * SECURITY: Validasi input sebelum proses authentication
+     * @return array<string, array<int, string>>
      */
     public function rules(): array
     {
@@ -43,27 +36,18 @@ class LoginRequest extends FormRequest
     /**
      * Attempt to authenticate the request's credentials.
      *
-     * SECURITY FEATURES:
-     * 1. Rate limiting - mencegah brute force
-     * 2. Session regeneration - mencegah session fixation
-     * 3. Proper credential verification via Auth facade
-     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function authenticate(): void
     {
-        // Check rate limit BEFORE attempting login
         $this->ensureIsNotRateLimited();
 
-        // Attempt authentication
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            // Login gagal - increment rate limiter
             RateLimiter::hit($this->throttleKey());
 
-            // Log attempt (untuk audit)
-            \App\Models\LoginAttempt::create([
-                'email' => $this->input('email'),
-                'ip_address' => $this->ip(),
+            LoginAttempt::create([
+                'email' => (string) $this->input('email'),
+                'ip_address' => (string) $this->ip(),
                 'successful' => false,
                 'type' => 'secure',
             ]);
@@ -73,13 +57,11 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        // Login berhasil - clear rate limiter
         RateLimiter::clear($this->throttleKey());
 
-        // Log successful attempt
-        \App\Models\LoginAttempt::create([
-            'email' => $this->input('email'),
-            'ip_address' => $this->ip(),
+        LoginAttempt::create([
+            'email' => (string) $this->input('email'),
+            'ip_address' => (string) $this->ip(),
             'successful' => true,
             'type' => 'secure',
         ]);
@@ -87,8 +69,6 @@ class LoginRequest extends FormRequest
 
     /**
      * Ensure the login request is not rate limited.
-     *
-     * SECURITY: Batasi 5 percobaan per menit
      *
      * @throws \Illuminate\Validation\ValidationException
      */
@@ -105,28 +85,18 @@ class LoginRequest extends FormRequest
         throw ValidationException::withMessages([
             'email' => trans('auth.throttle', [
                 'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
+                'minutes' => (int) ceil($seconds / 60),
             ]),
         ]);
     }
 
     /**
      * Get the rate limiting throttle key for the request.
-     *
-     * SECURITY: Key berdasarkan email + IP untuk prevent bypass
      */
     public function throttleKey(): string
     {
         return Str::transliterate(
-            Str::lower($this->string('email')) . '|' . $this->ip()
+            Str::lower((string) $this->string('email')) . '|' . (string) $this->ip()
         );
-    }
-
-    /**
-     * Get remaining attempts before lockout
-     */
-    public function remainingAttempts(): int
-    {
-        return RateLimiter::remaining($this->throttleKey(), 5);
     }
 }

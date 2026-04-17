@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Model Ticket
@@ -22,7 +24,7 @@ class Ticket extends Model
      * PENTING untuk keamanan!
      * Hanya kolom yang didefinisikan di sini yang bisa diisi via create() atau update()
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'user_id',
@@ -83,7 +85,7 @@ class Ticket extends Model
      *
      * Penggunaan: Ticket::status('open')->get()
      */
-    public function scopeStatus($query, string $status)
+    public function scopeStatus(Builder $query, string $status): Builder
     {
         return $query->where('status', $status);
     }
@@ -93,7 +95,7 @@ class Ticket extends Model
      *
      * Penggunaan: Ticket::priority('high')->get()
      */
-    public function scopePriority($query, string $priority)
+    public function scopePriority(Builder $query, string $priority): Builder
     {
         return $query->where('priority', $priority);
     }
@@ -101,7 +103,7 @@ class Ticket extends Model
     /**
      * Scope: Only open tickets
      */
-    public function scopeOpen($query)
+    public function scopeOpen(Builder $query): Builder
     {
         return $query->whereIn('status', ['open', 'in_progress']);
     }
@@ -118,7 +120,6 @@ class Ticket extends Model
             'in_progress' => 'bg-info',
             'resolved' => 'bg-success',
             'closed' => 'bg-secondary',
-            default => 'bg-secondary',
         };
     }
 
@@ -133,7 +134,6 @@ class Ticket extends Model
             'high' => 'bg-danger',
             'medium' => 'bg-warning',
             'low' => 'bg-success',
-            default => 'bg-secondary',
         };
     }
 
@@ -162,7 +162,7 @@ class Ticket extends Model
         return $this->assigned_to === $user->id;
     }
 
-    public function comments()
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }

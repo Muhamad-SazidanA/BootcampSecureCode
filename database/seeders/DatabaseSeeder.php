@@ -7,6 +7,7 @@ use App\Models\SqliLabUser;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Models\VulnerableUser;
+use App\Models\XssLabComment;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -43,7 +44,7 @@ class DatabaseSeeder extends Seeder
         $admin = User::create([
             'name' => 'Administrator',
             'email' => 'admin@wikrama.sch.id',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'admin',
             'email_verified_at' => now(),
         ]);
@@ -51,7 +52,7 @@ class DatabaseSeeder extends Seeder
         $staff = User::create([
             'name' => 'Staff Helpdesk',
             'email' => 'staff@wikrama.sch.id',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'staff',
             'email_verified_at' => now(),
         ]);
@@ -59,7 +60,7 @@ class DatabaseSeeder extends Seeder
         $budi = User::create([
             'name' => 'Budi Santoso',
             'email' => 'budi@student.wikrama.sch.id',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'user',
             'email_verified_at' => now(),
         ]);
@@ -67,7 +68,7 @@ class DatabaseSeeder extends Seeder
         $siti = User::create([
             'name' => 'Siti Rahayu',
             'email' => 'siti@student.wikrama.sch.id',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'user',
             'email_verified_at' => now(),
         ]);
@@ -84,7 +85,7 @@ class DatabaseSeeder extends Seeder
         $victim = User::create([
             'name' => 'Korban (Victim)',
             'email' => 'victim@test.com',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'user',
             'email_verified_at' => now(),
         ]);
@@ -93,7 +94,7 @@ class DatabaseSeeder extends Seeder
         $attacker = User::create([
             'name' => 'Penyerang (Attacker)',
             'email' => 'attacker@test.com',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'user',
             'email_verified_at' => now(),
         ]);
@@ -248,13 +249,12 @@ class DatabaseSeeder extends Seeder
         }
 
         // XSS Lab Comments (jika model exists dan ada ticket)
-        if (class_exists('App\Models\XssLabComment')) {
+        if (class_exists(XssLabComment::class)) {
             // XSS lab comments need a ticket_id, so we skip if tickets are empty
             $firstTicket = Ticket::first();
             if ($firstTicket) {
-                $xssLabCommentModel = app('App\Models\XssLabComment');
-                $xssLabCommentModel::truncate();
-                $xssLabCommentModel::insert([
+                XssLabComment::truncate();
+                XssLabComment::insert([
                     ['ticket_id' => $firstTicket->id, 'author_name' => 'John', 'content' => 'Great article! Very informative.', 'created_at' => now(), 'updated_at' => now()],
                     ['ticket_id' => $firstTicket->id, 'author_name' => 'Jane', 'content' => 'Thanks for sharing this knowledge.', 'created_at' => now(), 'updated_at' => now()],
                 ]);

@@ -23,7 +23,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SecurityHeaders
 {
-    
     /**
      * Handle an incoming request.
      *
@@ -31,7 +30,6 @@ class SecurityHeaders
      */
     public function handle(Request $request, Closure $next): Response
     {
-
         $response = $next($request);
 
         // =============================================

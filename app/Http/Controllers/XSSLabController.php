@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
+use App\Models\XssLabComment;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,6 +13,9 @@ use Illuminate\Http\RedirectResponse;
  * 
  * Controller untuk Lab XSS - Demonstrasi Vulnerable vs Secure
  * Sesuai dengan materi Hari 4 - Bagian 2, 3, dan 4
+ * 
+ * Menggunakan model XssLabComment (tabel: xss_lab_comments)
+ * TERPISAH dari Comment untuk ticket (tabel: comments)
  * 
  * ⚠️ PERINGATAN: Halaman vulnerable HANYA untuk pembelajaran!
  */
@@ -69,7 +72,7 @@ class XSSLabController extends Controller
      */
     public function storedVulnerable(): View
     {
-        $comments = Comment::orderBy('created_at', 'desc')->get();
+        $comments = XssLabComment::orderBy('created_at', 'desc')->get();
         $ticket = Ticket::first();
         
         return view('xss-lab.vulnerable.stored', [
@@ -84,10 +87,10 @@ class XSSLabController extends Controller
     public function storedVulnerableStore(Request $request): RedirectResponse
     {
         // ❌ VULNERABLE: Tidak ada validasi/sanitasi yang proper
-        Comment::create([
-            'ticket_id' => $request->input('ticket_id') ?? 1,
-            'author_name' => $request->input('author_name'),
-            'content' => $request->input('content'),
+        XssLabComment::create([
+            'ticket_id' => $request->ticket_id ?? 1,
+            'author_name' => $request->author_name,
+            'content' => $request->content,
         ]);
 
         return redirect()->route('xss-lab.stored.vulnerable')
@@ -101,7 +104,7 @@ class XSSLabController extends Controller
      */
     public function storedSecure(): View
     {
-        $comments = Comment::orderBy('created_at', 'desc')->get();
+        $comments = XssLabComment::orderBy('created_at', 'desc')->get();
         $ticket = Ticket::first();
         
         return view('xss-lab.secure.stored', [
@@ -123,7 +126,7 @@ class XSSLabController extends Controller
         ]);
 
         // Simpan - Blade akan auto-escape saat menampilkan
-        Comment::create($validated);
+        XssLabComment::create($validated);
 
         return redirect()->route('xss-lab.stored.secure')
             ->with('success', 'Komentar berhasil ditambahkan!');
@@ -155,12 +158,13 @@ class XSSLabController extends Controller
 
     /**
      * Reset comments (untuk demo ulang)
+     * Hanya menghapus xss_lab_comments, TIDAK mempengaruhi comments ticket
      */
     public function resetComments(): RedirectResponse
     {
-        Comment::truncate();
+        XssLabComment::truncate();
         
         return redirect()->route('xss-lab.index')
-            ->with('success', 'Semua komentar berhasil dihapus!');
+            ->with('success', 'Semua komentar XSS Lab berhasil dihapus!');
     }
 }
